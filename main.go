@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
@@ -26,7 +27,9 @@ func main() {
 	}
 	stsClient := sts.NewFromConfig(cfg)
 	jwtGetter := IdentityTokenRetriever{}
-	webIdentityRoleProvider := stscreds.NewWebIdentityRoleProvider(stsClient, os.Getenv("AWS_ROLE_ARN"), jwtGetter)
+	webIdentityRoleProvider := stscreds.NewWebIdentityRoleProvider(stsClient, os.Getenv("AWS_ROLE_ARN"), jwtGetter, func(o *stscreds.WebIdentityRoleOptions) {
+		o.Duration = time.Duration(12) * time.Hour
+	})
 	credentials, err := webIdentityRoleProvider.Retrieve(context.TODO())
 	if err != nil {
 		log.Fatal(err)
