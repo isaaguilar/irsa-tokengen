@@ -20,6 +20,7 @@ Requires the role-arn to assume and the JWT file generally placed into pods auto
 
 ```bash
 if [[ -s $AWS_WEB_IDENTITY_TOKEN_FILE ]]; then
+    export IRSA_TOKENGEN_DURATION_IN_HOURS="2" # Default 1 hour
     export $(irsa-tokengen)
 fi
 ```
